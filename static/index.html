@@ -216,6 +216,7 @@
                         </div>
                         <div>? miot_req_cmd -auto-resp-> device_resp_cmd</div>
                         <div>eg: <span style="background: honeydew;">down get_prop "prop.2.1" -> result 1</span></div>
+                        <div>eg: <span style="background: honeydew;">down get_prop "prop.2.1" -> result 1 -> properties_changed 2 1 1</span></div>
                     </div>
                     <div class="ui segment funcPanelSub">
                         <div class="ui label" id ="lblShortCmd" style="cursor: default;">
@@ -576,7 +577,15 @@ function ModuleFunctionPanel(service) {
         var maps = [];
         $('#lblAutoResp').parent().find('div.lbl').each(function(index, element) {
             var value = $(element).text().trim().split('->');
-            maps[maps.length] = {reqCmd: value[0].trim(), respCmd: value[1].trim()};
+            var cmds = [];
+            value.forEach((v, i) => {
+                if (i === 0) {
+                    return;
+                } else {
+                    cmds.push(v.trim());
+                }
+            });
+            maps[maps.length] = {reqCmd: value[0].trim(), respCmd: cmds};
         });
         service.updateAutoRespConfig(maps);
     }
@@ -629,10 +638,18 @@ function ModuleFunctionPanel(service) {
         var autoResp = $(event.target).val().trim();
         if (!autoResp) return;
         var value = autoResp.split('->');
-        if (value.length != 2) {
+        if (value.length < 2) {
             alert('invalid format[req -> resp].');
         }
-        addAutoResp(value[0].trim() + ' -> ' + value[1].trim());
+        var str = '';
+        value.forEach((v, i) => {
+            if (i === 0) {
+                str = v.trim();
+            } else {
+                str += (' -> ' + v.trim());
+            }
+        });
+        addAutoResp(str);
         syncAutoResp();
     });
 

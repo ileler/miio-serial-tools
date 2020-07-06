@@ -20,7 +20,7 @@ var wssender chan string
 var scoff chan bool
 var off chan bool
 var _status bool
-var autoRespMap map[string]string
+var autoRespMap map[string]interface{}
 var shortCmdFile string
 var autoRespFile string
 var serialConfigFile string
@@ -28,14 +28,14 @@ var serialConfigFile string
 func api(homedir string) {
 
     _status = false
-    autoRespMap = make(map[string]string)
+    autoRespMap = make(map[string]interface{})
     shortCmdFile = homedir + "short_cmd.json"
     autoRespFile = homedir + "auto_resp.json"
     serialConfigFile = homedir + "serial_config.json"
 
     autoRespArray := []struct {
         ReqCmd string
-        RespCmd string
+        RespCmd []string
     }{}
     file, err := os.OpenFile(autoRespFile, os.O_RDWR, 0644)
     defer file.Close()
@@ -115,8 +115,10 @@ func _start(w http.ResponseWriter, r *http.Request) {
                     if strings.HasPrefix(outstr, "recv: ") {
                         req_cmd := outstr[6:]
                         if resp_cmd, ok := autoRespMap[req_cmd]; ok {
-                            wssend("auto_resp: " + resp_cmd)
-                            Send(resp_cmd)
+                            for _, _cmd := range resp_cmd.([]string) {
+                                wssend("auto_resp: " + _cmd)
+                                Send(_cmd)
+                            }
                         }
                     }
             }
@@ -218,13 +220,13 @@ func _auto_resp(w http.ResponseWriter, r *http.Request) {
             decoder := json.NewDecoder(r.Body)
             objArray := []struct {
                 ReqCmd string
-                RespCmd string
+                RespCmd []string
             }{}
             err := decoder.Decode(&objArray)
             if err != nil {
                 panic(err)
             }
-            autoRespMap = make(map[string]string)
+            autoRespMap = make(map[string]interface{})
             for _, obj := range objArray {
                 autoRespMap[obj.ReqCmd] = obj.RespCmd
             }
