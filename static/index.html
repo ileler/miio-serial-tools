@@ -950,7 +950,11 @@ function ModuleStatus(service) {
         
         service.getAutoRespConfig((result) => {
             for (var i = 0, j = result.length; i < j; i++) {
-                moduleFunctionPanel.addAutoResp(result[i].ReqCmd + ' -> ' + result[i].RespCmd);
+                var str = '';
+                result[i].RespCmd.forEach((v, i) => {
+                    str += (' -> ' + v.trim());
+                });
+                moduleFunctionPanel.addAutoResp(result[i].ReqCmd + str);
             }
         });
         
