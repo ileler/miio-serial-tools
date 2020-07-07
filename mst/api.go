@@ -118,6 +118,7 @@ func _start(w http.ResponseWriter, r *http.Request) {
                             for _, _cmd := range resp_cmd.([]string) {
                                 wssend("auto_resp: " + _cmd)
                                 Send(_cmd)
+                                time.Sleep(time.Millisecond * 100)
                             }
                         }
                     }
