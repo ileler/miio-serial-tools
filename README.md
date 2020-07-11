@@ -7,8 +7,8 @@
 
 > 串口配置信息：  
 串口 -> miot模组  
-VCC  -> 3V3  
+VCC  -> (ESP-WROOM-02: 3V3) / (ESP-WROOM-32: 3V3) / (MHCWB4P: VDD)  
 GND  -> GND  
-RXD	 -> IO15(指令输出) / IO2(LOG输出)  
-TXD  -> IO13(指令输入)  
+RXD	 -> (ESP-WROOM-02: IO15-CMD|IO2-LOG) / (ESP-WROOM-32: GPIO17-CMD|TXD0-LOG) / (MHCWB4P: IO14-CMD)  
+TXD  -> (ESP-WROOM-02: IO13-CMDIN) / (ESP-WROOM-32: GPIO16-CMDIN) / (MHCWB4P: IO13-CMDIN)  
 
